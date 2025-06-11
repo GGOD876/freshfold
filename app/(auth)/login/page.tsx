@@ -2,18 +2,15 @@
 
 import { useForm } from "@tanstack/react-form"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { toast } from "sonner"
-
 import { Button } from "@/components/ui/button"
 import { InputField } from "@/components/ui/input"
 import Logo from "@/public/logo.png"
 
 export default function LoginPage() {
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
 
   const form = useForm({
     defaultValues: {
@@ -21,7 +18,6 @@ export default function LoginPage() {
       password: "",
     },
     onSubmit: async ({ value }) => {
-      setLoading(true)
       try {
         const res = await fetch("/api/login", {
           method: "POST",
@@ -42,8 +38,6 @@ export default function LoginPage() {
         toast.error("Something went wrong", {
           description: "Please try again later.",
         })
-      } finally {
-        setLoading(false)
       }
     },
   })
@@ -65,14 +59,18 @@ export default function LoginPage() {
                 if (!value) return "Email is required"
                 if (!/\S+@\S+\.\S+/.test(value)) return "Invalid email"
               },
-            }}
-            children={field => (
-              <div>
-                <InputField label="Email" type="email" placeholder="Email" value={field.state.value} onChange={e => field.handleChange(e.target.value)} />
-                {field.state.meta.errors?.[0] && <p className="text-sm text-red-500">{field.state.meta.errors[0]}</p>}
-              </div>
+            }}>
+            {field => (
+              <InputField
+                label="Email"
+                type="email"
+                placeholder="Email"
+                value={field.state.value}
+                onChange={e => field.handleChange(e.target.value)}
+                error={field.state.meta.errors?.[0]}
+              />
             )}
-          />
+          </form.Field>
 
           <form.Field
             name="password"
@@ -81,25 +79,23 @@ export default function LoginPage() {
                 if (!value) return "Password is required"
                 if (value.length < 6) return "Minimum 6 characters"
               },
-            }}
-            children={field => (
-              <div>
-                <InputField
-                  label="Password"
-                  type="password"
-                  placeholder="Password"
-                  value={field.state.value}
-                  onChange={e => field.handleChange(e.target.value)}
-                />
-                {field.state.meta.errors?.[0] && <p className="text-sm text-red-500">{field.state.meta.errors[0]}</p>}
-              </div>
+            }}>
+            {field => (
+              <InputField
+                label="Password"
+                type="password"
+                placeholder="Password"
+                value={field.state.value}
+                onChange={e => field.handleChange(e.target.value)}
+                error={field.state.meta.errors?.[0]}
+              />
             )}
-          />
+          </form.Field>
 
           <form.Subscribe>
             {formState => (
-              <Button type="submit" variant="default" className="w-full" disabled={!formState.canSubmit || formState.isSubmitting || loading}>
-                {loading || formState.isSubmitting ? "Logging in..." : "Log In"}
+              <Button type="submit" variant="default" className="w-full" disabled={!formState.canSubmit || formState.isSubmitting}>
+                {formState.isSubmitting ? "Logging in..." : "Log In"}
               </Button>
             )}
           </form.Subscribe>
