@@ -102,7 +102,7 @@ export default function LoginPage() {
         </form>
 
         <div className="flex justify-between text-sm text-blue-500">
-          <Link href="/signup">Don't have an account? Sign Up</Link>
+          <Link href="/signup">{"Don't have an account? Sign Up"}</Link>
           <Link href="/forget-password">Forgot Password?</Link>
         </div>
       </div>
