@@ -8,6 +8,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { InputField } from "@/components/ui/input"
 import Logo from "@/public/logo.png"
+import { supabase } from "@/lib/supabase-client"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -17,22 +18,17 @@ export default function LoginPage() {
       email: "",
       password: "",
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value: { email, password } }) => {
       try {
-        const res = await fetch("/api/login", {
-          method: "POST",
-          body: JSON.stringify(value),
-          headers: { "Content-Type": "application/json" },
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
         })
 
-        const result = await res.json()
-
-        if (res.ok) {
-          router.replace("/dashboard")
+        if (error) {
+          toast.error("Login Error", { description: error.message })
         } else {
-          toast.error("Login failed", {
-            description: result.message || "Invalid credentials",
-          })
+          router.replace("/dashboard")
         }
       } catch {
         toast.error("Something went wrong", {
@@ -46,12 +42,17 @@ export default function LoginPage() {
     <main className="min-h-screen bg-white dark:bg-slate-900 flex items-center justify-center px-4">
       <div className="w-full max-w-md space-y-6">
         <div className="flex justify-center">
-          <Image src={Logo} alt="FreshFold" className="w-24 h-24" />{" "}
+          <Image src={Logo} alt="FreshFold" className="w-24 h-24" />
         </div>
         <h1 className="text-2xl font-bold text-center text-slate-900 dark:text-white">Welcome Back</h1>
         <p className="text-center text-gray-500 dark:text-gray-300">Sign in to continue with FreshFold</p>
 
-        <form onSubmit={form.handleSubmit} className="space-y-4">
+        <form
+          onSubmit={e => {
+            e.preventDefault()
+            form.handleSubmit()
+          }}
+          className="space-y-4">
           <form.Field
             name="email"
             validators={{
