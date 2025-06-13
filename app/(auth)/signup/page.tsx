@@ -38,7 +38,7 @@ export default function SignupPage() {
 
         toast.success("You have successfully signed up!", { description: "Please confirm your account using the link sent to your email", duration: 5 })
         reset()
-      } catch (error) {
+      } catch {
         toast.error("Something went wrong", {
           description: "Please try again later.",
         })
