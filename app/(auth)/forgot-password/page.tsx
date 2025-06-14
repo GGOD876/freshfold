@@ -5,7 +5,6 @@ import Image from "next/image"
 import Link from "next/link"
 import { toast } from "sonner"
 import { supabase } from "@/lib/supabase-client"
-
 import Logo from "@/public/logo.png"
 import { Button } from "@/components/ui/button"
 import { InputField } from "@/components/ui/input"
@@ -19,10 +18,11 @@ export default function ForgotPasswordPage() {
     },
     onSubmit: async ({ value }) => {
       const { error } = await supabase.auth.resetPasswordForEmail(value.email, {
-        redirectTo: `${window.location.origin}/reset-password`, // Adjust as needed for deep linking
+        redirectTo: `${window.location.origin}/reset-password`,
       })
 
       if (!error) {
+        form.reset()
         toast.success("Password reset link sent", {
           description: "Check your email inbox.",
         })
@@ -44,7 +44,12 @@ export default function ForgotPasswordPage() {
         <Title type="sm" text="Forgot Password" />
         <Subtitle text="Enter your email to reset your password" />
 
-        <form className="space-y-4" onSubmit={e => e.preventDefault()}>
+        <form
+          className="space-y-4"
+          onSubmit={e => {
+            e.preventDefault()
+            form.handleSubmit()
+          }}>
           <form.Field
             name="email"
             validators={{

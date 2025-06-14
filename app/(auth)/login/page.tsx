@@ -104,7 +104,7 @@ export default function LoginPage() {
 
         <div className="flex justify-between text-sm text-blue-500">
           <Link href="/signup">{"Don't have an account? Sign Up"}</Link>
-          <Link href="/forget-password">Forgot Password?</Link>
+          <Link href="/forgot-password">Forgot Password?</Link>
         </div>
       </div>
     </main>
