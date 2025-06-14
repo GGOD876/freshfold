@@ -10,9 +10,10 @@ import Logo from "@/public/logo.png"
 import { toast } from "sonner"
 import { Title } from "@/components/ui/title"
 import { Subtitle } from "@/components/ui/subtitle"
-import { useEffect } from "react"
+import { Suspense, useEffect } from "react"
+import { LoadingFallback } from "@/components/ui/LoadingFallback"
 
-export default function ResetPasswordPage() {
+function ResetPasswordPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const code = searchParams.get("code")
@@ -123,5 +124,13 @@ export default function ResetPasswordPage() {
         </form>
       </div>
     </main>
+  )
+}
+
+export default function ResetPasswordWrapper() {
+  return (
+    <Suspense fallback={<LoadingFallback text="Loading reset page..." />}>
+      <ResetPasswordPage />
+    </Suspense>
   )
 }
